@@ -12,7 +12,7 @@ class Agent {
     required this.role,
     required this.description,
     required this.abilities,
-  });
+  }); 
 }
 
 
