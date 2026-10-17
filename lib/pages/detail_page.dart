@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:agent_valo_app/model/agent.dart';
+import 'package:agent_valo_app/widgets/type_chip.dart';
 
 class DetailPage extends StatelessWidget {
   final Agent agent;
@@ -7,95 +8,80 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: Text(agent.name)),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
+            Hero(
+              tag: agent.name,
               child: ClipRRect(
-                borderRadius: BorderRadiusGeometry.circular(20),
+                borderRadius: BorderRadius.circular(20),
                 child: Image.asset(
                   agent.image,
                   fit: BoxFit.cover,
                   width: double.infinity,
+                  errorBuilder: (_, __, ___) => const SizedBox(
+                    height: 200,
+                    child: Center(child: Icon(Icons.broken_image, size: 48)),
+                  ),
                 ),
               ),
             ),
+            const SizedBox(height: 10),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.0),
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
               width: double.infinity,
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.black12,
+                color: colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+                children: [
                   Text(
                     agent.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
-                      color: Colors.black,
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.blueAccent.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        width: 1,
-                        color: Colors.blue,
-                        style: BorderStyle.solid,
-                      ),
-                    ),
-                    child: Text(agent.role),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Deskripsi",
+                  const SizedBox(height: 8),
+                  TypeChip(type: agent.role),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Deskripsi',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    agent.description,
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(),
-                  ),
-                  SizedBox(height: 8,),
-                  Text(
-                    "Skills",
+                  const SizedBox(height: 8),
+                  Text(agent.description, textAlign: TextAlign.justify),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Skills',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
-                  
-                  SizedBox(height: 8,),
-                  Wrap(
-                    children: agent.abilities.map((e) => Container(
-                      margin: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black12,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          width: 1,
-                          color: Colors.black12,
-                          style: BorderStyle.solid,
-                        ),
+                  const SizedBox(height: 4),
+                  ...agent.abilities.map((e) {
+                    final parts = e.split(' - ');
+                    final title = parts.first;
+                    final desc = parts.length > 1
+                        ? parts.sublist(1).join(' - ')
+                        : '';
+                    return ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.star),
+                      title: Text(
+                        title,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.star,),
-                          SizedBox(width: 8,),
-                          Text(e),
-                        ]
-                      ),
-                    )).toList(),
-                  ),
-                  SizedBox(height: 8,),
+                      subtitle: desc.isEmpty ? null : Text(desc),
+                    );
+                  }),
                 ],
               ),
             ),
